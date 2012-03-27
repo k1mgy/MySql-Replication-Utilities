@@ -1,0 +1,32 @@
+MySql-Replication-Utilities
+27 MARCH 2012
+
+This is a collection (of one) utilities which assist in the care and feeding of MySql replication.
+
+
+re-sync_replication.php
+	This is a php script that is run at the commandline:
+		php -f ./re-sync_replication.php
+	It expects a companion configuration file: replication.cfg to exist. This file must be loaded with entries that define the host replication server and the client.
+	
+	re-sync_replication.php:
+		- connects to the replication host
+		- gathers information about the status of the host
+		- connects to the replication client
+		- gathers information about the status of the client
+	If there is no host and/or no replication client, the script dumps with a message.  Similarly it will dump if it fails to connect, etc.
+
+	If replication working and there is no error, the script displays all the information and exits.
+
+	If there is a replication error, the script
+		- issues "flush tables with read lock" on the host
+		- issues "stop slave" on the slave
+		- issues a new "change master..." command on the client
+		- starts the client
+		- issues "unlock tables" on the host
+
+	After a replication error, run the script again to see if either the error persists or a new one has occurred.
+
+	Correct each error until the script runs without showing an error.
+
+
